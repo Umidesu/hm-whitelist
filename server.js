@@ -1,42 +1,48 @@
 Config = {}
-Config.token = 'Token here'
-Config.guild = 'Guild id here'
-Config.role = 'Whitelist role id here'
+Config.token = 'Token Here'
+Config.guild = 'Server Id Here'
+Config.role = 'Role Id Here'
 
 const { Client } = require('discord.js')
 const client = new Client({intents:[3276799]})
 
-client.on('ready', () => {
+var ready = false
 
-    on('playerConnecting', (name, setKickReason, deferrals) => {
-        deferrals.defer()
-    
-        const player = global.source;
-    
-        setTimeout(() => {
-            deferrals.update(`Hello ${name}. Your discord ID is being checked.`)
-    
-            let discord_id = null;
-    
-            for (let i = 0; i < GetNumPlayerIdentifiers(player); i++) {
-                const identifier = GetPlayerIdentifier(player, i);
-    
-                if (identifier.includes('discord:')) {
-                    discord_id = identifier;
-                    console.log(discord_id);
-                }
+client.on('ready', () => {
+    ready = true
+    console.log('Whitelist bot is active!')
+})
+
+on('playerConnecting', (name, setKickReason, deferrals) => {
+    deferrals.defer()
+    if(!ready) return deferrals.done("Server Is Starting Up!")
+
+    const player = global.source;
+
+    setTimeout(() => {
+        deferrals.update(`Hello ${name}. Your discord ID is being checked.`)
+
+        let discord_id = null
+
+        for (let i = 0; i < GetNumPlayerIdentifiers(player); i++) {
+            const identifier = GetPlayerIdentifier(player, i);
+
+            if (identifier.includes('discord:')) {
+                discord_id = identifier.slice(8)
             }
-    
-            // pretend to be a wait
-            setTimeout(() => {
-                if (discord_id === null) {
-                    deferrals.done("You are not connected to Discord.")
-                } else {
-                    deferrals.done()
-                }
-            }, 0)
+        }
+
+        // pretend to be a wait
+        setTimeout(() => {
+            var guild = client.guilds.cache.get(Config.guild)
+            var member = guild.members.cache.get(discord_id)
+            if (!member.roles.cache.has(Config.role)) {
+                deferrals.done("You don't have a Whitelist.")
+            } else {
+                deferrals.done()
+            }
         }, 0)
-    })
+    }, 0)
 })
 
 client.login(Config.token)
