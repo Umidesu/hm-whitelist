@@ -1,4 +1,4 @@
-# autopilot
+# Discord Whitelist
 Discord Whitelist script for FiveM
 
 # config
