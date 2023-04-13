@@ -29,9 +29,11 @@ on('playerConnecting', (name, setKickReason, deferrals) => {
 
             if (identifier.includes('discord:')) {
                 discord_id = identifier.slice(8)
-            } else {
-                deferrals.done("Fivem'e bağlı bir discord hesabı bulunamadı!")
             }
+        }
+
+        if(!discord_id) {
+            deferrals.done("Fivem'e bağlı bir discord hesabı bulunamadı!")
         }
 
         // pretend to be a wait
