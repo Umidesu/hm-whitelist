@@ -15,12 +15,12 @@ client.on('ready', () => {
 
 on('playerConnecting', (name, setKickReason, deferrals) => {
     deferrals.defer()
-    if(!ready) return deferrals.done("Server Is Starting Up!")
+    if(!ready) return deferrals.done("Sunucu Başlatılıyor!")
 
     const player = global.source;
 
     setTimeout(() => {
-        deferrals.update(`Hello ${name}. Your discord ID is being checked.`)
+        deferrals.update(`Merhaba ${name}. Discord id kontrol ediliyor!.`)
 
         let discord_id = null
 
@@ -29,6 +29,8 @@ on('playerConnecting', (name, setKickReason, deferrals) => {
 
             if (identifier.includes('discord:')) {
                 discord_id = identifier.slice(8)
+            } else {
+                deferrals.done("Fivem'e bağlı bir discord hesabı bulunamadı!")
             }
         }
 
@@ -36,10 +38,15 @@ on('playerConnecting', (name, setKickReason, deferrals) => {
         setTimeout(() => {
             var guild = client.guilds.cache.get(Config.guild)
             var member = guild.members.cache.get(discord_id)
-            if (!member.roles.cache.has(Config.role)) {
-                deferrals.done("You don't have a Whitelist.")
+
+            if (!member) {
+                deferrals.done("Sunucu discord'unda bulunmuyorsunuz! Katılmak için: discord.gg/redroleplay")
             } else {
-                deferrals.done()
+                if (!member.roles.cache.has(Config.role)) {
+                    deferrals.done("Whitelist rolüne sahip değilsiniz!.")
+                } else {
+                    deferrals.done()
+                }
             }
         }, 0)
     }, 0)

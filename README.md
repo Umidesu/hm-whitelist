@@ -1,7 +1,7 @@
 # Discord Whitelist
 Discord Whitelist script for FiveM
 
-# config
+# Config
 server.lua
 
 ```
